@@ -1,1 +1,12 @@
-<p>todo-list works!</p>
+
+<div>Мой список задач</div>
+
+
+
+<ng-container *ngFor="let task of tasks$ | async">
+  <app-todo-card
+    [task]="task"
+
+    >
+  </app-todo-card>
+</ng-container>
