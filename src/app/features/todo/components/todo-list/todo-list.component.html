@@ -2,7 +2,7 @@
   <h1 class="todo-list-title">My Tasks</h1>
 
   <div class="todo-list-actions">
-    <button mat-raised-button color="primary" >
+    <button mat-raised-button color="primary">
       <mat-icon>add</mat-icon>
       Add New Task
     </button>
@@ -14,23 +14,22 @@
       <h2 class="column-header">
         <mat-icon class="column-icon">pending_actions</mat-icon>
         Active Tasks
-        <span class="badge">{{ (tasks$ | async) }}</span>
+        <span class="badge">{{ (incompleteTasks$ | async)?.length || 0 }}</span>
       </h2>
 
-      <div cdkDropList
-           #activeList="cdkDropList"
-           class="task-list">
+      <div class="task-list">
+        <!-- Пример карточки задачи -->
+        @for (task of incompleteTasks$ | async; track task.id) {
 
-        @for (task of (tasks$ | async); track task.id) {
-          <app-todo-card
-            [task]="task">
-          </app-todo-card>
-        } @empty {
-          <div class="empty-state">
-            <mat-icon>check_circle_outline</mat-icon>
-            <p>No active tasks</p>
-          </div>
-        }
+        <app-todo-card
+          [task]="task">
+        </app-todo-card>}
+
+        <!-- Состояние при отсутствии задач -->
+        <div class="empty-state">
+          <mat-icon>check_circle_outline</mat-icon>
+          <p>No active tasks</p>
+        </div>
       </div>
     </div>
 
@@ -39,25 +38,23 @@
       <h2 class="column-header">
         <mat-icon class="column-icon">task_alt</mat-icon>
         Completed Tasks
-        <span class="badge">{{ (tasks$ | async) }}</span>
+        <span class="badge">{{ (completedTasks$ | async)?.length || 0 }}</span>
       </h2>
 
-      <div cdkDropList
-
-           class="task-list completed">
-
-        @for (task of (tasks$ | async); track task.id) {
+      <div class="task-list completed">
+        <!-- Пример карточки выполненной задачи -->
+        @for (task of completedTasks$ | async; track task.id){
           <app-todo-card
-            [task]="task"
-
-          >
+            [task]="task">
           </app-todo-card>
-        } @empty {
-          <div class="empty-state">
-            <mat-icon>pending_actions</mat-icon>
-            <p>No completed tasks</p>
-          </div>
         }
+
+
+        <!-- Состояние при отсутствии задач -->
+        <div class="empty-state">
+          <mat-icon>pending_actions</mat-icon>
+          <p>No completed tasks</p>
+        </div>
       </div>
     </div>
   </div>
