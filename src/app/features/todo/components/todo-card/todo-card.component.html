@@ -1,0 +1,29 @@
+<mat-card class="todo-card" [class.completed]="task.completed">
+  <mat-card-header>
+    <div mat-card-avatar class="task-status">
+      <mat-icon>{{ task.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+    </div>
+    <mat-card-title>{{ task.todo }}</mat-card-title>
+    <mat-card-subtitle>User ID: {{ task.user_id }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content class="todo-card-content">
+    <div class="task-field">
+      <strong>Status:</strong>
+      <span>{{ task.completed ? 'Completed' : 'Active' }}</span>
+    </div>
+    <div class="task-field">
+      <strong>Due date:</strong>
+      <span></span>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-icon-button color="primary" >
+      <mat-icon>{{ task.completed ? 'undo' : 'done' }}</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

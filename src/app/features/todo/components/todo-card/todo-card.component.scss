@@ -1,0 +1,37 @@
+.todo-card {
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+
+  &.completed {
+    background-color: #f5f5f5;
+    opacity: 0.8;
+
+    .task-status {
+      color: #4caf50;
+    }
+  }
+}
+
+.task-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.todo-card-content {
+  padding: 0 16px;
+}
+
+.task-field {
+  margin: 8px 0;
+
+  strong {
+    margin-right: 8px;
+  }
+}

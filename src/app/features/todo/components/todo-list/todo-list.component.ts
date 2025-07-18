@@ -1,14 +1,20 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {TaskService} from '../../Services/task.Service';
-import {TodoCard} from '../todo-card/todo-card';
 import {AsyncPipe, CommonModule} from '@angular/common';
+import {TodoCardComponent} from '../todo-card/todo-card.component';
+import {MatButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {CdkDropList} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-todo-list',
   imports: [
     CommonModule,
-    TodoCard,
-    AsyncPipe
+    TodoCardComponent,
+    AsyncPipe,
+    MatIcon,
+    MatButton,
+    CdkDropList
   ],
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss',
@@ -22,4 +28,5 @@ export class TodoListComponent implements OnInit{
     this.taskService.getTask()
   }
 
+  protected readonly length = length;
 }

@@ -1,12 +1,64 @@
+<div class="todo-list-container">
+  <h1 class="todo-list-title">My Tasks</h1>
 
-<div>Мой список задач</div>
+  <div class="todo-list-actions">
+    <button mat-raised-button color="primary" >
+      <mat-icon>add</mat-icon>
+      Add New Task
+    </button>
+  </div>
 
+  <div class="todo-list-columns">
+    <!-- Active Tasks Column -->
+    <div class="todo-column">
+      <h2 class="column-header">
+        <mat-icon class="column-icon">pending_actions</mat-icon>
+        Active Tasks
+        <span class="badge">{{ (tasks$ | async) }}</span>
+      </h2>
 
+      <div cdkDropList
+           #activeList="cdkDropList"
+           class="task-list">
 
-<ng-container *ngFor="let task of tasks$ | async">
-  <app-todo-card
-    [task]="task"
+        @for (task of (tasks$ | async); track task.id) {
+          <app-todo-card
+            [task]="task">
+          </app-todo-card>
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>check_circle_outline</mat-icon>
+            <p>No active tasks</p>
+          </div>
+        }
+      </div>
+    </div>
 
-    >
-  </app-todo-card>
-</ng-container>
+    <!-- Completed Tasks Column -->
+    <div class="todo-column">
+      <h2 class="column-header">
+        <mat-icon class="column-icon">task_alt</mat-icon>
+        Completed Tasks
+        <span class="badge">{{ (tasks$ | async) }}</span>
+      </h2>
+
+      <div cdkDropList
+
+           class="task-list completed">
+
+        @for (task of (tasks$ | async); track task.id) {
+          <app-todo-card
+            [task]="task"
+
+          >
+          </app-todo-card>
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>pending_actions</mat-icon>
+            <p>No completed tasks</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
