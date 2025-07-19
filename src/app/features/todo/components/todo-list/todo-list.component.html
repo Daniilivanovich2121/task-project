@@ -30,7 +30,10 @@
           </div>
         } @else {
           @for (task of incompleteTasks$ | async; track task.id) {
-            <app-todo-card [task]="task"></app-todo-card>
+            <app-todo-card
+              [task]="task"
+              (taskDelete)="deleteTask($event)"
+            ></app-todo-card>
           }
 
           @if ((incompleteTasks$ | async)?.length === 0) {
@@ -59,7 +62,11 @@
           </div>
         } @else {
           @for (task of completedTasks$ | async; track task.id) {
-            <app-todo-card [task]="task"></app-todo-card>
+            <app-todo-card
+              [task]="task"
+              (taskDelete)="deleteTask($event)"
+            >
+            </app-todo-card>
           }
 
           @if ((completedTasks$ | async)?.length === 0) {

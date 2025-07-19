@@ -18,12 +18,13 @@ export class TaskService {
     });
   }
 
-  deleteTask(todo: Todo) {
-
-    const tasks = this.state.value.filter(v => v.id !== todo.id)
-
-    this.http.delete(`${API_URL}/${todo.id}`).pipe(
-      tap(() => this.state.next(tasks))
-    ).subscribe()
+  deleteTask(todo: Todo): void {
+    this.http.delete<Todo>(`${API_URL}/${todo.id}`).subscribe({
+      next: (deletedTodo) => {
+        // Полностью удаляем задачу из массива (не просто помечаем)
+        const tasks = this.state.value.filter(t => t.id !== todo.id);
+        this.state.next(tasks);
+      },
+    });
   }
 }

@@ -45,4 +45,11 @@ export class TodoListComponent implements OnInit {
   ngOnInit() {
     this.taskService.getTask()
   }
+  deleteTask(task: Todo): void {
+    this.loading = true;
+    this.taskService.deleteTask(task);
+    // Не нужно подписываться, так как сервис сам обновит состояние
+    // Можно добавить setTimeout для сброса loading, если нужно
+    setTimeout(() => this.loading = false, 500);
+  }
 }

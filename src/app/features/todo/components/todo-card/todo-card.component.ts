@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,4 +19,8 @@ import {Todo} from '../../models/todo.model';
 })
 export class TodoCardComponent {
   @Input() task!: Todo;
+  @Output() taskDelete = new EventEmitter<Todo>(); // Изменяем на EventEmitter<Todo>
+  onDelete(task:Todo) {
+    this.taskDelete.emit(this.task); // Передаем всю задачу при удалении
+  }
 }
