@@ -1,9 +1,12 @@
- export interface Todo {
+export interface Todo {
   id: number;
   todo: string
   completed: boolean
   user_id: number
+  isDeleted: boolean
+  deletedOn: string
 }
+
 export interface TodoResponse {
   todos: Todo[];
   total: number;
