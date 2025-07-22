@@ -21,11 +21,11 @@ export class TaskService {
   );
 
   getTask() {
-    this.http.get<TodoResponse>(API_URL + 'todos').subscribe(response => this.state.next(response.todos));
+    this.http.get<TodoResponse>(API_URL).subscribe(response => this.state.next(response.todos));
   }
 
   deleteTask(todo: Todo): void {
-    this.http.delete<Todo>(API_URL + `products/${todo.id}`).subscribe((deletedTodo) => {
+    this.http.delete<Todo>(API_URL + `/${todo.id}`).subscribe((deletedTodo) => {
       // Полностью удаляем задачу из массива (не просто помечаем)
       const tasks = this.state.value.filter(t => t.id !== todo.id);
       this.state.next(tasks);
