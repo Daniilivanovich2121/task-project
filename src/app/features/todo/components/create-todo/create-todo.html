@@ -1,0 +1,36 @@
+<!-- create-todo.component.html -->
+<mat-dialog-content>
+  <form class="todo-form" [formGroup]="createTodoForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Task Description</mat-label>
+      <input matInput formControlName="todo" placeholder="Enter task description">
+      @if (createTodoForm.controls['todo'].hasError('required')) {
+        <mat-error>Description is required</mat-error>
+      }
+      @if (createTodoForm.controls['todo'].hasError('minlength')) {
+        <mat-error>Description should be at least 3 characters</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>User ID</mat-label>
+      <input type="number" matInput formControlName="userId" placeholder="Enter user ID">
+      @if (createTodoForm.controls['userId'].hasError('required')) {
+        <mat-error>User ID is required</mat-error>
+      }
+      @if (createTodoForm.controls['userId'].hasError('min')) {
+
+        <mat-error>User ID must be at least 1</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-checkbox formControlName="completed">Completed</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!createTodoForm.valid">
+    {{ data ? 'Update' : 'Create' }}
+  </button>
+</mat-dialog-actions>

@@ -1,1 +1,1 @@
-export const API_URL = 'https://dummyjson.com/todos'
+export const API_URL = 'https://dummyjson.com/'

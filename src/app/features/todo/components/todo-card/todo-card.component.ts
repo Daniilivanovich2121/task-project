@@ -20,7 +20,11 @@ import {Todo} from '../../models/todo.model';
 export class TodoCardComponent {
   @Input() task!: Todo;
   @Output() taskDelete = new EventEmitter<Todo>(); // Изменяем на EventEmitter<Todo>
+  @Output()taskEdit = new EventEmitter<Todo>();
   onDelete(task:Todo) {
-    this.taskDelete.emit(this.task); // Передаем всю задачу при удалении
+    this.taskDelete.emit(task); // Передаем всю задачу при удалении
+  }
+  editTask(task: Todo){
+    this.taskEdit.emit(task);
   }
 }

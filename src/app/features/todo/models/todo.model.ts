@@ -3,8 +3,8 @@ export interface Todo {
   todo: string
   completed: boolean
   user_id: number
-  isDeleted: boolean
-  deletedOn: string
+  isDeleted?: boolean
+  deletedOn?: string
 }
 
 export interface TodoResponse {
@@ -12,4 +12,10 @@ export interface TodoResponse {
   total: number;
   skip: number;
   limit: number;
+}
+export interface TodoCreate {
+  id: number;
+  todo: string
+  completed: boolean
+  user_id: number
 }
