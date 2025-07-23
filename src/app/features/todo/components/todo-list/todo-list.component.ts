@@ -28,7 +28,6 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class TodoListComponent implements OnInit {
   public readonly taskService = inject(TaskService);
-  public loading = true; // Добавляем флаг загрузки
   readonly dialog = inject(MatDialog);
 
   public readonly incompleteTasks$ = this.taskService.incompleteTasks
@@ -37,24 +36,28 @@ export class TodoListComponent implements OnInit {
     this.taskService.getTask()
   }
   deleteTask(task: Todo): void {
-    this.loading = true;
     this.taskService.deleteTask(task);
-    // Не нужно подписываться, так как сервис сам обновит состояние
-    // Можно добавить setTimeout для сброса loading, если нужно
-    setTimeout(() => this.loading = false, 500); // убрать
   }
   openDialog(editableTodo?: Todo): void {
     const dialogRef = this.dialog.open(CreateTodo, {
       width: '500px',
       data: editableTodo
     });
-
     dialogRef.afterClosed().subscribe((result: TodoCreate | undefined) => {
       if (result) {
-          // Создание новой задачи
+        if (editableTodo) {
+          this.taskService.editTask(result, editableTodo.id );
+        }else{
           this.taskService.createTask(result);
+          }
       }
     });
   }
+  editTask(task: Todo): void {
+    this.openDialog(task);
+  }
+  toggleComplete(task: Todo): void {
+    const updatedTask = { ...task, completed: !task.completed };
+    this.taskService.editTask(updatedTask, task.id); }
 }
-// todo заменить много async на 1 подписку
+

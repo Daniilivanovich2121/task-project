@@ -4,7 +4,7 @@
       <mat-icon>{{ task.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
     </div>
     <mat-card-title>{{ task.todo }}</mat-card-title>
-    <mat-card-subtitle>User ID: {{ task.user_id }}</mat-card-subtitle>
+    <mat-card-subtitle>User ID: {{ task.userId }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content class="todo-card-content">
@@ -18,8 +18,11 @@
     </div>
   </mat-card-content>
   <mat-card-actions align="end">
-    <button mat-icon-button color="primary" >
+    <button mat-icon-button color="primary" (click)="onToggleComplete(task)">
       <mat-icon>{{ task.completed ? 'undo' : 'done' }}</mat-icon>
+    </button>
+    <button mat-icon-button color="primary" (click)="onEdit(task)">
+      <mat-icon>edit</mat-icon>
     </button>
     <button mat-icon-button color="warn" (click)="onDelete(task)">
       <mat-icon>delete</mat-icon>

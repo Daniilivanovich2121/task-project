@@ -2,7 +2,7 @@ export interface Todo {
   id: number;
   todo: string
   completed: boolean
-  user_id: number
+  userId: number
   isDeleted?: boolean
   deletedOn?: string
 }
@@ -17,5 +17,5 @@ export interface TodoCreate {
   id: number;
   todo: string
   completed: boolean
-  user_id: number
+  userId: number
 }

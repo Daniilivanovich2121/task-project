@@ -38,5 +38,13 @@ export class TaskService {
       this.state.next([todo, ...this.state.value,])
     })
   }
+  editTask(editableTodo: Partial<Todo>, id:number){
+    this.http.put<Todo>(API_URL +`${id}`, editableTodo).subscribe(todo => {
+      const todos = this.state.value.map(t =>
+        t.id === todo.id ? todo : t
+      );
+      this.state.next(todos)
+    })
+  }
 
 }
