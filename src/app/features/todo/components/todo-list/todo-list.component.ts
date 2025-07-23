@@ -56,8 +56,6 @@ export class TodoListComponent implements OnInit {
   editTask(task: Todo): void {
     this.openDialog(task);
   }
-  toggleComplete(task: Todo): void {
-    const updatedTask = { ...task, completed: !task.completed };
-    this.taskService.editTask(updatedTask, task.id); }
+
 }
 
