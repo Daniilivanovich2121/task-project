@@ -6,13 +6,18 @@
       Add New Task
     </button>
   </div>
-
-  <!-- Индикатор загрузки -->
-   <!-- <mat-progress-bar mode="indeterminate"></mat-progress-bar> добавить при создании state-->
-
+  @if (isLoading$ | async) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
   <div class="todo-list-columns">
     @let incompleteTasks = incompleteTasks$ | async;
-    <div class="todo-column">
+    <div
+      cdkDropList
+      #incompleteList="cdkDropList"
+      [cdkDropListData]="(incompleteTasks$ | async) || []"
+      [cdkDropListConnectedTo]="[completedList]"
+      (cdkDropListDropped)="taskDrop($event)"
+      class="todo-column">
       <h2 class="column-header">
         <mat-icon class="column-icon">pending_actions</mat-icon>
         Active Tasks
@@ -20,16 +25,13 @@
       </h2>
 
       <div class="task-list">
-          <div class="loading-state">
-           <!-- <mat-spinner diameter="20"></mat-spinner>
-            <p>Loading tasks...</p> добавить при создании state-->
-          </div>
           @for (task of incompleteTasks; track task.id) {
             <app-todo-card
+              cdkDrag
+              [cdkDragData]="task"
               [task]="task"
               (taskDelete)="deleteTask($event)"
               (taskEdit)="editTask($event)"
-
             ></app-todo-card>
           }
 
@@ -43,7 +45,15 @@
     </div>
 
     <!-- Completed Tasks Column -->
-    <div class="todo-column">
+    <div
+
+      cdkDropList
+      #completedList="cdkDropList"
+      [cdkDropListData]="(completedTasks$ | async) || []"
+      [cdkDropListConnectedTo]="[incompleteList]"
+      (cdkDropListDropped)="taskDrop($event)"
+      class="todo-column">
+
       @let completedTasks = completedTasks$ | async;
       <h2 class="column-header">
         <mat-icon class="column-icon">task_alt</mat-icon>
@@ -52,12 +62,10 @@
       </h2>
 
       <div class="task-list completed">
-          <div class="loading-state">
-            <!-- <mat-spinner diameter="20"></mat-spinner>
-            <p>Loading tasks...</p> добавить при создании state-->
-          </div>
           @for (task of completedTasks; track task.id) {
             <app-todo-card
+              cdkDrag
+              [cdkDragData]="task"
               [task]="task"
               (taskDelete)="deleteTask($event)"
               (taskEdit)="editTask($event)"

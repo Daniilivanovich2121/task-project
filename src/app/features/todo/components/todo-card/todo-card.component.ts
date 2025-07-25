@@ -19,17 +19,14 @@ import {Todo} from '../../models/todo.model';
 })
 export class TodoCardComponent {
   @Input() task!: Todo;
-  @Output() taskDelete = new EventEmitter<Todo>(); // Изменяем на EventEmitter<Todo>
+  @Output() taskDelete = new EventEmitter<Todo>();
   @Output()taskEdit = new EventEmitter<Todo>();
   @Output() taskToggleComplete = new EventEmitter<Todo>();
 
   onDelete(task:Todo) {
-    this.taskDelete.emit(task); // Передаем всю задачу при удалении
+    this.taskDelete.emit(task);
   }
   onEdit(task: Todo){
     this.taskEdit.emit(task);
-  }
-  onToggleComplete(task: Todo): void {
-    this.taskToggleComplete.emit(task);
   }
 }
