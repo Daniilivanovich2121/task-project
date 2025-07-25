@@ -1,24 +1,43 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {API_URL} from '../../../core/api-url';
-import {BehaviorSubject, catchError, EMPTY, finalize, map, Subject, tap} from 'rxjs';
-import {Todo, TodoCreate, TodoResponse} from '../models/todo.model';
-import {TASK_INITIAL_STATE, TaskStateModel} from '../models/task-state.model';
-import {CdkDragDrop, moveItemInArray, } from '@angular/cdk/drag-drop';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { API_URL } from '../../../core/api-url';
+import { BehaviorSubject, catchError, EMPTY, finalize, map, Subject } from 'rxjs';
+import { Todo, TodoCreate, TodoResponse } from '../models/todo.model';
+import { TASK_INITIAL_STATE, TaskStateModel } from '../models/task-state.model';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
   private readonly http = inject(HttpClient);
-  private readonly state: BehaviorSubject<TaskStateModel> = new BehaviorSubject<TaskStateModel>(TASK_INITIAL_STATE);
+  private readonly localStorageKey = 'todo_app_tasks';
+  private readonly state: BehaviorSubject<TaskStateModel> = new BehaviorSubject<TaskStateModel>(this.getInitialState());
+
   public todos$ = this.state.asObservable();
   public readonly isLoading = this.todos$.pipe(
     map(state => state.isLoading),
   )
+  private getInitialState(): TaskStateModel {
+    const savedTasks = localStorage.getItem(this.localStorageKey);
+    return {
+      ...TASK_INITIAL_STATE,
+      tasks: savedTasks ? JSON.parse(savedTasks) : TASK_INITIAL_STATE.tasks
+    };
+  }
+  private saveTasks(tasks: Todo[]): void {
+    // Создаем глубокую копию массива задач
+    const tasksCopy = tasks.map(task => ({...task}));
+    // Сохраняем копию в Local Storage
+    localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
+  }
 
   setState(partialState: Partial<TaskStateModel>) {
-    this.state.next({...this.state.value, ...partialState});
+    const newState = {...this.state.value, ...partialState};
+    this.state.next(newState);
+    if (partialState.tasks) {
+      this.saveTasks(newState.tasks);
+    }
   }
 
   public readonly incompleteTasks = this.todos$.pipe(
@@ -28,30 +47,48 @@ export class TaskService {
   public readonly completedTasks = this.todos$.pipe(
     map(tasks => this.state.value.tasks.filter(task => task.completed))
   );
-
   getTask() {
-    this.setState({isLoading: true});
-    this.http.get<TodoResponse>(API_URL).pipe(
-      finalize(() => this.setState({isLoading: false})),
-      catchError((error) => {
-        this.setState({error: error})
-        return EMPTY;
-      })
-    ).subscribe(response => {
-      this.setState({tasks: response.todos});
-      this.setState({error: null});
-    });
+    // Проверяем наличие данных в Local Storage
+    const savedTasks = localStorage.getItem(this.localStorageKey);
+
+    if (savedTasks && JSON.parse(savedTasks).length > 0) {
+      // Если есть сохраненные задачи, используем их
+      const tasks = JSON.parse(savedTasks);
+      this.setState({
+        tasks: tasks,
+        isLoading: false,
+        error: null
+      });
+    } else {
+      // Если нет сохраненных задач, делаем запрос к API
+      this.setState({ isLoading: true });
+
+      this.http.get<TodoResponse>(API_URL).pipe(
+        finalize(() => this.setState({ isLoading: false })),
+        catchError((error) => {
+          this.setState({ error: error });
+          return EMPTY;
+        })
+      ).subscribe(response => {
+        this.setState({
+          tasks: response.todos,
+          error: null
+        });
+      });
+    }
   }
 
   deleteTask(todo: Todo): void {
     const tasks: Todo[] = this.state.value.tasks.filter(t => t.id !== todo.id);
-    this.http.delete<Todo>(API_URL + `/${todo.id}`).subscribe(() => this.setState({tasks: tasks}))//спросить как улучшить
+    this.http.delete<Todo>(API_URL + `/${todo.id}`).subscribe(() => {
+      this.setState({tasks: tasks});
+    });
   }
 
   createTask(newTodo: TodoCreate) {
     this.http.post<Todo>(API_URL + 'add', newTodo).subscribe((todo) => {
-      this.setState({tasks: [todo, ...this.state.value.tasks]})
-    })
+      this.setState({tasks: [todo, ...this.state.value.tasks]});
+    });
   }
 
   editTask(editableTodo: Partial<Todo>, id: number) {
@@ -59,8 +96,8 @@ export class TaskService {
       const todos = this.state.value.tasks.map(t =>
         t.id === todo.id ? todo : t
       );
-      this.setState({tasks: todos})
-    })
+      this.setState({tasks: todos});
+    });
   }
 
   updateTaskPosition(event: CdkDragDrop<Todo[]>): void {
@@ -74,13 +111,9 @@ export class TaskService {
     }
 
     if (event.previousContainer === event.container) {
-      // Перемещение внутри одной колонки
       moveItemInArray(tasks, event.previousIndex, event.currentIndex);
     } else {
-      // Перенос между колонками - меняем статус только локально
       const updatedTask = { ...task, completed: !task.completed };
-
-      // Находим индекс задачи в общем массиве
       const taskIndex = tasks.findIndex(t => t.id === task.id);
       if (taskIndex !== -1) {
         tasks[taskIndex] = updatedTask;
@@ -88,5 +121,4 @@ export class TaskService {
     }
     this.setState({ tasks });
   }
-
 }
