@@ -1,10 +1,10 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { API_URL } from '../../../core/api-url';
-import { BehaviorSubject, catchError, EMPTY, finalize, map, Subject } from 'rxjs';
-import { Todo, TodoCreate, TodoResponse } from '../models/todo.model';
-import { TASK_INITIAL_STATE, TaskStateModel } from '../models/task-state.model';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {API_URL} from '../../../core/api-url';
+import {BehaviorSubject, catchError, EMPTY, finalize, map, Subject} from 'rxjs';
+import {Todo, TodoCreate, TodoResponse} from '../models/todo.model';
+import {TASK_INITIAL_STATE, TaskStateModel} from '../models/task-state.model';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,15 @@ export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly localStorageKey = 'todo_app_tasks';
   private readonly state: BehaviorSubject<TaskStateModel> = new BehaviorSubject<TaskStateModel>(this.getInitialState());
-
   public todos$ = this.state.asObservable();
-  public readonly isLoading = this.todos$.pipe(
-    map(state => state.isLoading),
-  )
+  public readonly isLoading = this.todos$.pipe(map(state => state.isLoading))
+
+  public readonly incompleteTasks = this.todos$.pipe(
+    map(tasks => this.state.value.tasks.filter(task => !task.completed)));
+  public readonly completedTasks = this.todos$.pipe(
+    map(tasks => this.state.value.tasks.filter(task => task.completed)));
+
+
   private getInitialState(): TaskStateModel {
     const savedTasks = localStorage.getItem(this.localStorageKey);
     return {
@@ -25,10 +29,10 @@ export class TaskService {
       tasks: savedTasks ? JSON.parse(savedTasks) : TASK_INITIAL_STATE.tasks
     };
   }
+
   private saveTasks(tasks: Todo[]): void {
     // Создаем глубокую копию массива задач
-    const tasksCopy = tasks.map(task => ({...task}));
-    // Сохраняем копию в Local Storage
+    const tasksCopy = structuredClone(tasks)    // Сохраняем копию в Local Storage с помощью structuredClone
     localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
   }
 
@@ -40,17 +44,8 @@ export class TaskService {
     }
   }
 
-  public readonly incompleteTasks = this.todos$.pipe(
-    map(tasks => this.state.value.tasks.filter(task => !task.completed))
-  );
-
-  public readonly completedTasks = this.todos$.pipe(
-    map(tasks => this.state.value.tasks.filter(task => task.completed))
-  );
   getTask() {
-    // Проверяем наличие данных в Local Storage
-    const savedTasks = localStorage.getItem(this.localStorageKey);
-
+    const savedTasks = localStorage.getItem(this.localStorageKey);    // Проверяем наличие данных в Local Storage
     if (savedTasks && JSON.parse(savedTasks).length > 0) {
       // Если есть сохраненные задачи, используем их
       const tasks = JSON.parse(savedTasks);
@@ -60,13 +55,11 @@ export class TaskService {
         error: null
       });
     } else {
-      // Если нет сохраненных задач, делаем запрос к API
-      this.setState({ isLoading: true });
-
+      this.setState({isLoading: true});       // Если нет сохраненных задач, делаем запрос к API
       this.http.get<TodoResponse>(API_URL).pipe(
-        finalize(() => this.setState({ isLoading: false })),
+        finalize(() => this.setState({isLoading: false})),
         catchError((error) => {
-          this.setState({ error: error });
+          this.setState({error: error});
           return EMPTY;
         })
       ).subscribe(response => {
@@ -109,16 +102,15 @@ export class TaskService {
       console.error('Task is undefined in drag and drop');
       return;
     }
-
     if (event.previousContainer === event.container) {
       moveItemInArray(tasks, event.previousIndex, event.currentIndex);
     } else {
-      const updatedTask = { ...task, completed: !task.completed };
+      const updatedTask = {...task, completed: !task.completed};
       const taskIndex = tasks.findIndex(t => t.id === task.id);
       if (taskIndex !== -1) {
         tasks[taskIndex] = updatedTask;
       }
     }
-    this.setState({ tasks });
+    this.setState({tasks});
   }
 }
