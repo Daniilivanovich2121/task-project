@@ -26,8 +26,8 @@ import {CommonModule} from '@angular/common';
 })
 export class CreateTodo {
   private readonly fb = inject(FormBuilder);
-  readonly dialogRef = inject(MatDialogRef<CreateTodo>);
-  data = inject<Todo>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject(MatDialogRef);
+  private readonly data = inject(MAT_DIALOG_DATA);
 
   public createTodoForm: FormGroup = this.fb.group({
     todo: [this.data?.todo || '', [Validators.required, Validators.minLength(3)]],

@@ -31,7 +31,7 @@ export class TaskService {
   }
 
   private saveTasks(tasks: Todo[]): void {
-    const tasksCopy = structuredClone(tasks)    // Создаем глубокую копию с помощью structuredClone и  сохраням в Local Storage (оставил)
+    const tasksCopy = structuredClone(tasks)
     localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
   }
 
@@ -44,7 +44,7 @@ export class TaskService {
   }
 
   getTask() {
-    const savedTasks = localStorage.getItem(this.localStorageKey); // Проверяем наличие данных в Local Storage (оставил)
+    const savedTasks = localStorage.getItem(this.localStorageKey);
     if (savedTasks && JSON.parse(savedTasks).length > 0) {
       // Если есть сохраненные задачи, используем их
       const tasks = JSON.parse(savedTasks);
@@ -54,7 +54,7 @@ export class TaskService {
         error: null
       });
     } else {
-      this.setState({isLoading: true});       // Если нет сохраненных задач, делаем запрос к API(оставил)
+      this.setState({isLoading: true});
       this.http.get<TodoResponse>(API_URL).pipe(
         finalize(() => this.setState({isLoading: false})),
         catchError((error) => {
@@ -75,7 +75,7 @@ export class TaskService {
     this.setState({tasks: tasks});
   }
 
-  createTask(newTodo: TodoCreate) {
+  createTask(newTodo: TodoCreate):void {
     const todo: Todo = {
       ...newTodo,
       id: this.generateId(),
@@ -85,7 +85,7 @@ export class TaskService {
     this.setState({tasks: [todo, ...this.state.value.tasks]});
   }
 
-  editTask(editableTodo: Partial<Todo>, id: number) {
+  editTask(editableTodo: Partial<Todo>, id: number): void {
     const todos = this.state.value.tasks.map(t =>
       t.id === id ? {...t, ...editableTodo} : t
     );

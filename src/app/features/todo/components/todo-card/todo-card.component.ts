@@ -23,10 +23,10 @@ export class TodoCardComponent {
   @Output()taskEdit = new EventEmitter<Todo>();
   @Output() taskToggleComplete = new EventEmitter<Todo>();
 
-  onDelete(task:Todo) {
+  onDelete(task:Todo):void {
     this.taskDelete.emit(task);
   }
-  onEdit(task: Todo){
+  onEdit(task: Todo): void{
     this.taskEdit.emit(task);
   }
 }
