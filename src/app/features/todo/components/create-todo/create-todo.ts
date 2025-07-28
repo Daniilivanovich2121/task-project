@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {Todo} from '../../models/todo.model';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
@@ -27,7 +26,7 @@ import {CommonModule} from '@angular/common';
 export class CreateTodo {
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef);
-  private readonly data = inject(MAT_DIALOG_DATA);
+  public readonly data = inject(MAT_DIALOG_DATA);
 
   public createTodoForm: FormGroup = this.fb.group({
     todo: [this.data?.todo || '', [Validators.required, Validators.minLength(3)]],

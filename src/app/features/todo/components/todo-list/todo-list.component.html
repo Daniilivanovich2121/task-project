@@ -6,7 +6,8 @@
       Add New Task
     </button>
   </div>
-  @if (isLoading$ | async) {
+  @let todoState = todoState$ | async;
+  @if (todoState?.isLoading  ) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
   <div class="todo-list-columns">
@@ -14,7 +15,7 @@
     <div
       cdkDropList
       #incompleteList="cdkDropList"
-      [cdkDropListData]="(incompleteTasks$ | async) || []"
+      [cdkDropListData]="(incompleteTasks) || []"
       [cdkDropListConnectedTo]="[completedList]"
       (cdkDropListDropped)="taskDrop($event)"
       class="todo-column">
@@ -43,17 +44,17 @@
           }
       </div>
     </div>
-
+    @let completedTasks = completedTasks$ | async;
     <!-- Completed Tasks -->
     <div
       cdkDropList
       #completedList="cdkDropList"
-      [cdkDropListData]="(completedTasks$ | async) || []"
+      [cdkDropListData]="(completedTasks) || []"
       [cdkDropListConnectedTo]="[incompleteList]"
       (cdkDropListDropped)="taskDrop($event)"
       class="todo-column">
 
-      @let completedTasks = completedTasks$ | async;
+
       <h2 class="column-header">
         <mat-icon class="column-icon">task_alt</mat-icon>
         Completed Tasks

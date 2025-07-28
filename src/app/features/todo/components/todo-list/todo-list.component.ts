@@ -27,19 +27,22 @@ import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoListComponent implements OnInit {
-  public readonly taskService = inject(TaskService);
-  readonly dialog = inject(MatDialog);
+  private readonly taskService = inject(TaskService);
+  private readonly dialog = inject(MatDialog);
+
+  public readonly todoState$ = this.taskService.todosState
+
   public readonly incompleteTasks$ = this.taskService.incompleteTasks
   public readonly completedTasks$ = this.taskService.completedTasks
-  public readonly isLoading$ = this.taskService.isLoading
-
 
   ngOnInit() {
     this.taskService.getTask()
   }
+
   deleteTask(task: Todo): void {
     this.taskService.deleteTask(task);
   }
+
   openDialog(editableTodo?: Todo): void {
     const dialogRef = this.dialog.open(CreateTodo, {
       width: '500px',
@@ -55,10 +58,12 @@ export class TodoListComponent implements OnInit {
       }
     });
   }
+
   editTask(task: Todo): void {
     this.openDialog(task);
   }
-  taskDrop(event: CdkDragDrop<Todo[]>) {
+
+  taskDrop(event: CdkDragDrop<Todo[]>): void {
     this.taskService.updateTaskPosition(event);
   }
 }

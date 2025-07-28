@@ -13,40 +13,17 @@ export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly localStorageKey = 'todo_app_tasks';
   private readonly state: BehaviorSubject<TaskStateModel> = new BehaviorSubject<TaskStateModel>(this.getInitialState());
-  public todos$ = this.state.asObservable();
-  public readonly isLoading = this.todos$.pipe(map(state => state.isLoading))
 
-  public readonly incompleteTasks = this.todos$.pipe(
+  public todosState = this.state.asObservable();
+
+  public readonly incompleteTasks = this.todosState.pipe(
     map(task => this.state.value.tasks.filter(task => !task.completed)));
-  public readonly completedTasks = this.todos$.pipe(
+  public readonly completedTasks = this.todosState.pipe(
     map(task => this.state.value.tasks.filter(task => task.completed)));
 
-
-  private getInitialState(): TaskStateModel {
-    const savedTasks = localStorage.getItem(this.localStorageKey);
-    return {
-      ...TASK_INITIAL_STATE,
-      tasks: savedTasks ? JSON.parse(savedTasks) : TASK_INITIAL_STATE.tasks
-    };
-  }
-
-  private saveTasks(tasks: Todo[]): void {
-    const tasksCopy = structuredClone(tasks)
-    localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
-  }
-
-  setState(partialState: Partial<TaskStateModel>) {
-    const newState = {...this.state.value, ...partialState};
-    this.state.next(newState);
-    if (partialState.tasks) {
-      this.saveTasks(newState.tasks);
-    }
-  }
-
-  getTask() {
+  getTask():void {
     const savedTasks = localStorage.getItem(this.localStorageKey);
     if (savedTasks && JSON.parse(savedTasks).length > 0) {
-      // Если есть сохраненные задачи, используем их
       const tasks = JSON.parse(savedTasks);
       this.setState({
         tasks: tasks,
@@ -112,6 +89,28 @@ export class TaskService {
     }
     this.setState({tasks});
   }
+
+  private getInitialState(): TaskStateModel {
+    const savedTasks = localStorage.getItem(this.localStorageKey);
+    return {
+      ...TASK_INITIAL_STATE,
+      tasks: savedTasks ? JSON.parse(savedTasks) : TASK_INITIAL_STATE.tasks
+    };
+  }
+
+  private saveTasksToLocalStorage(tasks: Todo[]): void {
+    const tasksCopy = structuredClone(tasks)
+    localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
+  }
+
+  private setState(partialState: Partial<TaskStateModel>):void {
+    const newState = {...this.state.value, ...partialState};
+    this.state.next(newState);
+    if (partialState.tasks) {
+      this.saveTasksToLocalStorage(newState.tasks);
+    }
+  }
+
   private generateId(): number {
     const tasks = this.state.value.tasks;
     return tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
