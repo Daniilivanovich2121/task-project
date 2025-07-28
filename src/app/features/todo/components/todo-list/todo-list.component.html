@@ -44,9 +44,8 @@
       </div>
     </div>
 
-    <!-- Completed Tasks Column -->
+    <!-- Completed Tasks -->
     <div
-
       cdkDropList
       #completedList="cdkDropList"
       [cdkDropListData]="(completedTasks$ | async) || []"

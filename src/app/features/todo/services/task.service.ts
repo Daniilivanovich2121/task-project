@@ -31,8 +31,7 @@ export class TaskService {
   }
 
   private saveTasks(tasks: Todo[]): void {
-    // Создаем глубокую копию массива задач
-    const tasksCopy = structuredClone(tasks)    // Сохраняем копию в Local Storage с помощью structuredClone
+    const tasksCopy = structuredClone(tasks)    // Создаем глубокую копию с помощью structuredClone и  сохраням в Local Storage (оставил)
     localStorage.setItem(this.localStorageKey, JSON.stringify(tasksCopy));
   }
 
@@ -45,7 +44,7 @@ export class TaskService {
   }
 
   getTask() {
-    const savedTasks = localStorage.getItem(this.localStorageKey);    // Проверяем наличие данных в Local Storage
+    const savedTasks = localStorage.getItem(this.localStorageKey); // Проверяем наличие данных в Local Storage (оставил)
     if (savedTasks && JSON.parse(savedTasks).length > 0) {
       // Если есть сохраненные задачи, используем их
       const tasks = JSON.parse(savedTasks);
@@ -55,7 +54,7 @@ export class TaskService {
         error: null
       });
     } else {
-      this.setState({isLoading: true});       // Если нет сохраненных задач, делаем запрос к API
+      this.setState({isLoading: true});       // Если нет сохраненных задач, делаем запрос к API(оставил)
       this.http.get<TodoResponse>(API_URL).pipe(
         finalize(() => this.setState({isLoading: false})),
         catchError((error) => {

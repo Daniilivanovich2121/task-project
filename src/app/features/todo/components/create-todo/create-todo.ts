@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Todo } from '../../models/todo.model';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { CommonModule } from '@angular/common';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {Todo} from '../../models/todo.model';
+import {MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-create-todo',
@@ -40,6 +40,6 @@ export class CreateTodo {
   }
 
   onSubmit(): void {
-      this.dialogRef.close(this.createTodoForm.value);
+    this.dialogRef.close(this.createTodoForm.value);
   }
 }
