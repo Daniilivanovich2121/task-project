@@ -73,24 +73,24 @@ export class TaskService {
 
   deleteTask(todo: Todo): void {
     const tasks: Todo[] = this.state.value.tasks.filter(t => t.id !== todo.id);
-    this.http.delete<Todo>(API_URL + `/${todo.id}`).subscribe(() => {
-      this.setState({tasks: tasks});
-    });
+    this.setState({tasks: tasks});
   }
 
   createTask(newTodo: TodoCreate) {
-    this.http.post<Todo>(API_URL + 'add', newTodo).subscribe((todo) => {
-      this.setState({tasks: [todo, ...this.state.value.tasks]});
-    });
+    const todo: Todo = {
+      ...newTodo,
+      id: this.generateId(),
+      completed: false,
+      userId: 1
+    };
+    this.setState({tasks: [todo, ...this.state.value.tasks]});
   }
 
   editTask(editableTodo: Partial<Todo>, id: number) {
-    this.http.put<Todo>(API_URL + `${id}`, editableTodo).subscribe(todo => {
-      const todos = this.state.value.tasks.map(t =>
-        t.id === todo.id ? todo : t
-      );
-      this.setState({tasks: todos});
-    });
+    const todos = this.state.value.tasks.map(t =>
+      t.id === id ? {...t, ...editableTodo} : t
+    );
+    this.setState({tasks: todos});
   }
 
   updateTaskPosition(event: CdkDragDrop<Todo[]>): void {
@@ -112,5 +112,9 @@ export class TaskService {
       }
     }
     this.setState({tasks});
+  }
+  private generateId(): number {
+    const tasks = this.state.value.tasks;
+    return tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
   }
 }
