@@ -25,6 +25,7 @@ export class TodoCardComponent {
   onDelete(task:Todo):void {
     this.taskDelete.emit(task);
   }
+
   onEdit(task: Todo): void{
     this.taskEdit.emit(task);
   }
