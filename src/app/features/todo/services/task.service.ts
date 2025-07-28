@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {API_URL} from '../../../core/api-url';
-import {BehaviorSubject, catchError, EMPTY, finalize, map, Subject} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, finalize, map,} from 'rxjs';
 import {Todo, TodoCreate, TodoResponse} from '../models/todo.model';
 import {TASK_INITIAL_STATE, TaskStateModel} from '../models/task-state.model';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -17,9 +17,9 @@ export class TaskService {
   public readonly isLoading = this.todos$.pipe(map(state => state.isLoading))
 
   public readonly incompleteTasks = this.todos$.pipe(
-    map(tasks => this.state.value.tasks.filter(task => !task.completed)));
+    map(task => this.state.value.tasks.filter(task => !task.completed)));
   public readonly completedTasks = this.todos$.pipe(
-    map(tasks => this.state.value.tasks.filter(task => task.completed)));
+    map(task => this.state.value.tasks.filter(task => task.completed)));
 
 
   private getInitialState(): TaskStateModel {
