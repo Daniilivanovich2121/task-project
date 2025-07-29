@@ -30,10 +30,10 @@ export class TodoListComponent implements OnInit {
   private readonly taskService = inject(TaskService);
   private readonly dialog = inject(MatDialog);
 
-  public readonly todoState$ = this.taskService.todosState
+  public readonly todoState = this.taskService.todosState
 
-  public readonly incompleteTasks$ = this.taskService.incompleteTasks
-  public readonly completedTasks$ = this.taskService.completedTasks
+  public readonly incompleteTasks = this.taskService.incompleteTasks
+  public readonly completedTasks = this.taskService.completedTasks
 
   ngOnInit() {
     this.taskService.getTask()
