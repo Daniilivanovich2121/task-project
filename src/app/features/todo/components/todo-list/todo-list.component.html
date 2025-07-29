@@ -1,0 +1,84 @@
+<div class="todo-list-container">
+  <h1 class="todo-list-title">My Tasks</h1>
+  <div class="todo-list-actions">
+    <button mat-raised-button color="primary" (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+      Add New Task
+    </button>
+  </div>
+  @let todoState = todoState$ | async;
+  @if (todoState?.isLoading  ) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+  <div class="todo-list-columns">
+    @let incompleteTasks = incompleteTasks$ | async;
+    <div
+      cdkDropList
+      #incompleteList="cdkDropList"
+      [cdkDropListData]="(incompleteTasks) || []"
+      [cdkDropListConnectedTo]="[completedList]"
+      (cdkDropListDropped)="taskDrop($event)"
+      class="todo-column">
+      <h2 class="column-header">
+        <mat-icon class="column-icon">pending_actions</mat-icon>
+        Active Tasks
+        <span class="badge">{{ (incompleteTasks)?.length || 0 }}</span>
+      </h2>
+
+      <div class="task-list">
+          @for (task of incompleteTasks; track task.id) {
+            <app-todo-card
+              cdkDrag
+              [cdkDragData]="task"
+              [task]="task"
+              (taskDelete)="deleteTask($event)"
+              (taskEdit)="editTask($event)"
+            ></app-todo-card>
+          }
+
+          @if ((incompleteTasks)?.length === 0) {
+            <div class="empty-state">
+              <mat-icon>check_circle_outline</mat-icon>
+              <p>No active tasks</p>
+            </div>
+          }
+      </div>
+    </div>
+    @let completedTasks = completedTasks$ | async;
+    <!-- Completed Tasks -->
+    <div
+      cdkDropList
+      #completedList="cdkDropList"
+      [cdkDropListData]="(completedTasks) || []"
+      [cdkDropListConnectedTo]="[incompleteList]"
+      (cdkDropListDropped)="taskDrop($event)"
+      class="todo-column">
+
+
+      <h2 class="column-header">
+        <mat-icon class="column-icon">task_alt</mat-icon>
+        Completed Tasks
+        <span class="badge">{{ (completedTasks)?.length || 0 }}</span>
+      </h2>
+
+      <div class="task-list completed">
+          @for (task of completedTasks; track task.id) {
+            <app-todo-card
+              cdkDrag
+              [cdkDragData]="task"
+              [task]="task"
+              (taskDelete)="deleteTask($event)"
+              (taskEdit)="editTask($event)"
+            >
+            </app-todo-card>
+          }
+          @if ((completedTasks)?.length === 0) {
+            <div class="empty-state">
+              <mat-icon>pending_actions</mat-icon>
+              <p>No completed tasks</p>
+            </div>
+          }
+      </div>
+    </div>
+  </div>
+</div>
