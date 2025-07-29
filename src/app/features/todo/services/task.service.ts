@@ -1,7 +1,7 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {API_URL} from '../../../core/api-url';
-import { catchError, EMPTY, finalize, map,} from 'rxjs';
+import { catchError, EMPTY, finalize,} from 'rxjs';
 import {Todo, TodoCreate, TodoResponse} from '../models/todo.model';
 import {TASK_INITIAL_STATE, TaskStateModel} from '../models/task-state.model';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
