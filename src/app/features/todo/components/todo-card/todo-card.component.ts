@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, input,output,} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,15 +18,16 @@ import {Todo} from '../../models/todo.model';
   styleUrls: ['./todo-card.component.scss']
 })
 export class TodoCardComponent {
-  @Input() task!: Todo;
-  @Output() taskDelete = new EventEmitter<Todo>();
-  @Output()taskEdit = new EventEmitter<Todo>();
+  task = input.required<Todo>();
+  taskDelete = output<Todo>();
+  taskEdit = output<Todo>();
 
-  onDelete(task:Todo):void {
-    this.taskDelete.emit(task);
+
+  onDelete():void {
+    this.taskDelete.emit(this.task());
   }
 
-  onEdit(task: Todo): void{
-    this.taskEdit.emit(task);
+  onEdit():void{
+    this.taskEdit.emit(this.task());
   }
 }

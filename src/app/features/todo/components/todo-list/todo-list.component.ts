@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { TaskService } from '../../services/task.service';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { TodoCardComponent } from '../todo-card/todo-card.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -15,7 +15,6 @@ import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
   imports: [
     CommonModule,
     TodoCardComponent,
-    AsyncPipe,
     MatIcon,
     MatButton,
     MatProgressBar,
@@ -30,10 +29,10 @@ export class TodoListComponent implements OnInit {
   private readonly taskService = inject(TaskService);
   private readonly dialog = inject(MatDialog);
 
-  public readonly todoState$ = this.taskService.todosState
+  public readonly todoState = this.taskService.todosState
 
-  public readonly incompleteTasks$ = this.taskService.incompleteTasks
-  public readonly completedTasks$ = this.taskService.completedTasks
+  public readonly incompleteTasks = this.taskService.incompleteTasks
+  public readonly completedTasks = this.taskService.completedTasks
 
   ngOnInit() {
     this.taskService.getTask()

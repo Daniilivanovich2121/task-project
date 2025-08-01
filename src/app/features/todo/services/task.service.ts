@@ -1,7 +1,7 @@
-import {inject, Injectable} from '@angular/core';
+import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {API_URL} from '../../../core/api-url';
-import {BehaviorSubject, catchError, EMPTY, finalize, map,} from 'rxjs';
+import { catchError, EMPTY, finalize} from 'rxjs';
 import {Todo, TodoCreate, TodoResponse} from '../models/todo.model';
 import {TASK_INITIAL_STATE, TaskStateModel} from '../models/task-state.model';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -12,14 +12,11 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly localStorageKey = 'todo_app_tasks';
-  private readonly state: BehaviorSubject<TaskStateModel> = new BehaviorSubject<TaskStateModel>(this.getInitialState());
+  private readonly state = signal<TaskStateModel>(this.getInitialState());
 
-  public todosState = this.state.asObservable();
-
-  public readonly incompleteTasks = this.todosState.pipe(
-    map(task => this.state.value.tasks.filter(task => !task.completed)));
-  public readonly completedTasks = this.todosState.pipe(
-    map(task => this.state.value.tasks.filter(task => task.completed)));
+  public todosState = computed(() => this.state());
+  public incompleteTasks = computed(() => this.state().tasks.filter(task => !task.completed));
+  public completedTasks = computed(() => this.state().tasks.filter(task => task.completed));
 
   getTask():void {
     const savedTasks = localStorage.getItem(this.localStorageKey);
@@ -48,7 +45,7 @@ export class TaskService {
   }
 
   deleteTask(todo: Todo): void {
-    const tasks: Todo[] = this.state.value.tasks.filter(t => t.id !== todo.id);
+    const tasks: Todo[] = this.state().tasks.filter(t => t.id !== todo.id);
     this.setState({tasks: tasks});
   }
 
@@ -59,18 +56,18 @@ export class TaskService {
       completed: false,
       userId: 1
     };
-    this.setState({tasks: [todo, ...this.state.value.tasks]});
+    this.setState({tasks: [todo, ...this.state().tasks]});
   }
 
   editTask(editableTodo: Partial<Todo>, id: number): void {
-    const todos = this.state.value.tasks.map(t =>
+    const todos = this.state().tasks.map(t =>
       t.id === id ? {...t, ...editableTodo} : t
     );
     this.setState({tasks: todos});
   }
 
   updateTaskPosition(event: CdkDragDrop<Todo[]>): void {
-    const currentState = this.state.value;
+    const currentState = this.state();
     const tasks = [...currentState.tasks];
     const task = event.item.data;
 
@@ -104,15 +101,15 @@ export class TaskService {
   }
 
   private setState(partialState: Partial<TaskStateModel>):void {
-    const newState = {...this.state.value, ...partialState};
-    this.state.next(newState);
+    const newState = {...this.state(), ...partialState};
+    this.state.set(newState);
     if (partialState.tasks) {
       this.saveTasksToLocalStorage(newState.tasks);
     }
   }
 
   private generateId(): number {
-    const tasks = this.state.value.tasks;
+    const tasks = this.state().tasks;
     return tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
   }
 }
